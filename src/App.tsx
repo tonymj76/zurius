@@ -1,5 +1,13 @@
 import React from 'react';
 
-const App = () => (<div>Hello zurus</div>)
+
+const App = () => {
+  return (
+    <div >
+      <div className="search--bar"></div>
+      <div className="image"></div>
+    </div>
+  )
+};
 
 export default App;
