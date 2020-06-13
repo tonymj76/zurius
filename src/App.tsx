@@ -1,97 +1,109 @@
-import React from 'react';
-import {InputBase, Grid, Paper} from '@material-ui/core'
-import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles'
+import React, { FC, useState} from 'react';
+import { Card,Layout, Row, Col,Select, Empty, Input, AutoComplete} from 'antd';
+import { AudioOutlined } from '@ant-design/icons';
+import Data from './hospitalList.json'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    image : {
-      height: 'auto',
-      width: '300px',
-      [theme.breakpoints.up('md')]: {
-        width: '100%'
-      }
-    },
-    root: {
-      flexGrow: 1,
-      marginTop:'7rem',
-      maxHeight: '80vh'
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    search: {
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.black, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.15),
-      },
-      marginLeft: 0,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
-    },
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'blue',
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '20ch',
-        '&:focus': {
-          width: '40ch',
-        },
-      },
-    },
-  }),
+const { Header, Footer, Content } = Layout;
+const { Option } = Select;
+
+const { Search } = Input;
+
+const suffix = (
+  <AudioOutlined
+    style={{
+      fontSize: 16,
+      color: '#31aa52',
+    }}
+  />
 );
 
-const App = () => {
-  const classes = useStyles()
+const radusList = [
+  '5km', '10km', '20km'
+]
+const searchResult = (query: string) => (
+  // pickby((value:string) => value.match.query)
+  Data.name.filter(value => value.match(query))
+)
+
+const App: FC = () => {
+  const [options, setOptions] = useState([] as any);
+
+  const handleChange = (value: string) => {
+    return console.log(value);
+  }
+  const handleSearch = (value: string) => {
+    setOptions(value ? {yes:"yes", no:"no"}: []);
+    console.log(options);
+  };
+  const onSelect = (value: string) => {
+    console.log('onSelect', value);
+  };
+
   return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-            <img className={classes.image}
-              src="https://res.cloudinary.com/oluwatobiloba/image/upload/v1591795521/incredible%20project/hero-image_ixmtkr.png"
-              alt="" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper className={classes.search}>
-              <div className={classes.searchIcon}>
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
+  <div className="App">
+    <Layout>
+      <Header>
+        <h1 className="display-3">Header {console.log(options)}</h1>
+      </Header>
+      <Content>
+        <Row gutter={16}>
+          <Col span={10}>
+            <Card
+              hoverable
+              style={{ margin: '1rem'}}
+              cover={
+                <img
+                  alt="example"
+                  src="https://res.cloudinary.com/oluwatobiloba/image/upload/v1591795521/incredible%20project/hero-image_ixmtkr.png"
+                />
+              }
+            />
+          </Col>
+          <Col span={12}>
+            
+            <AutoComplete
+              dropdownMatchSelectWidth={252}
+              style={{
+                width: 300,
+              }}
+              options={options}
+              onSelect={onSelect}
+              onSearch={handleSearch}
+            >
+              <Search
+                placeholder="search text"
+                enterButton="Search"
+                size="large"
+                suffix={suffix}
+                // onSearch={value => console.log(value)}
               />
-          </Paper>
-        </Grid>
-      </Grid>
-    </div>
+            </AutoComplete>
+            <span>Radius</span>
+            <Select style={{ width: 120 }} onChange={handleChange} allowClear >
+              {radusList.map((e) => (
+                <Option value={e} key={e}>{e}</Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={24}>
+            <Empty  description={
+              <span>
+                No Search Result
+              </span>
+            }
+            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+            imageStyle={{
+              height: 60,
+            }}
+            />
+          </Col>
+        </Row>
+      </Content>
+      <Footer>Footer</Footer>
+    </Layout>
+  </div>
   )
 };
 
