@@ -17,13 +17,10 @@ const suffix = (
   />
 );
 
-const radusList = [
-  '5km', '10km', '20km'
-]
-const searchResult = (query: string) => (
-  // pickby((value:string) => value.match.query)
-  Data.name.filter(value => value.match(query))
-)
+const searchResult = (query: string) => {
+  const d = Data.name.filter(value => value.match(query))
+  return d.map(op => ({value: op}))
+}
 
 const App: FC = () => {
   const [options, setOptions] = useState([] as any);
@@ -32,18 +29,20 @@ const App: FC = () => {
     return console.log(value);
   }
   const handleSearch = (value: string) => {
-    setOptions(value ? {yes:"yes", no:"no"}: []);
-    console.log(options);
+    setOptions(value ? searchResult(value): []);
   };
   const onSelect = (value: string) => {
-    console.log('onSelect', value);
+    console.log(`${value} Nigeria`);
   };
 
+  const radusList = [
+    '5km', '10km', '20km'
+  ]
   return (
   <div className="App">
     <Layout>
       <Header>
-        <h1 className="display-3">Header {console.log(options)}</h1>
+        <h1 className="display-3">Header</h1>
       </Header>
       <Content>
         <Row gutter={16}>
@@ -75,7 +74,6 @@ const App: FC = () => {
                 enterButton="Search"
                 size="large"
                 suffix={suffix}
-                // onSearch={value => console.log(value)}
               />
             </AutoComplete>
             <span>Radius</span>
