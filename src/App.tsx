@@ -1,21 +1,30 @@
-import React, { FC, useState} from 'react';
-import { Card,Layout, Row, Col,Select, Empty, Input, AutoComplete} from 'antd';
-import { AudioOutlined } from '@ant-design/icons';
+import React, { FC, useState, useEffect} from 'react';
+import {
+  Card,
+  Layout,
+  Row,
+  Col,
+  Select,
+  Empty,
+  Divider,
+  AutoComplete,
+  Form,
+  Button
+} from 'antd';
+import axios from 'axios';
 import Data from './hospitalList.json'
 
-const { Header, Footer, Content } = Layout;
+const { Content } = Layout;
 const { Option } = Select;
 
-const { Search } = Input;
+const layout = {
+  labelCol: { span: 6},
+  wrapperCol: {span: 4},
+}
 
-const suffix = (
-  <AudioOutlined
-    style={{
-      fontSize: 16,
-      color: '#31aa52',
-    }}
-  />
-);
+const tailLayout = {
+  wrapperCol: {offset:4, span: 8}
+}
 
 const searchResult = (query: string) => {
   const d = Data.name.filter(value => value.match(query))
@@ -23,29 +32,59 @@ const searchResult = (query: string) => {
 }
 
 const App: FC = () => {
+  const [query, setQuery] = useState({} as any)
+  const [state, setState] = useState(
+    {
+      isLoading: true,
+      photos: "",
+      formatted_address: "",
+      name: "",
+      rating: ""
+    }
+  )
   const [options, setOptions] = useState([] as any);
+  const [form] = Form.useForm();
+  useEffect(() => {
+    const fetchData  = async () => {
+      const result = await axios(
+        `http://localhost:8080/?input=${query.input}&radius=${query.radius}`
+      )
+      const {Candidates} = result.data.Message;
+      setState({
+        ...state, ...{
+          isLoading:false,
+          ...Candidates[0]
+        } 
+      })
+    }
+    fetchData()
+  }, [query])
+  const onReset = () => {
+    form.resetFields();
+  }
+  const onFinish = (values: object) => {
+    setQuery({...values})
+    
+  };
 
   const handleChange = (value: string) => {
-    return console.log(value);
+    form.setFieldsValue({radius: value || " "});
   }
   const handleSearch = (value: string) => {
     setOptions(value ? searchResult(value): []);
   };
   const onSelect = (value: string) => {
-    console.log(`${value} Nigeria`);
+    form.setFieldsValue({input: value+ " Nigeria" });
   };
 
-  const radusList = [
+  const radiusList = [
     '5km', '10km', '20km'
   ]
   return (
   <div className="App">
     <Layout>
-      <Header>
-        <h1 className="display-3">Header</h1>
-      </Header>
       <Content>
-        <Row gutter={16}>
+        <Row gutter={16} justify="center" align="middle">
           <Col span={10}>
             <Card
               hoverable
@@ -59,29 +98,39 @@ const App: FC = () => {
             />
           </Col>
           <Col span={12}>
-            
-            <AutoComplete
-              dropdownMatchSelectWidth={252}
-              style={{
-                width: 300,
-              }}
-              options={options}
-              onSelect={onSelect}
-              onSearch={handleSearch}
-            >
-              <Search
+          <Divider orientation="center" style={{ color: '#333', fontWeight: 'normal' }}>
+            Search Hospitals
+          </Divider>
+            <Form {...layout} form={form} name= "control-hooks" onFinish={onFinish}>
+              <Form.Item name="input" label="Search" rules={[{required: true}]}>
+              <AutoComplete
+                dropdownMatchSelectWidth={252}
+                style={{
+                  width: 300,
+                }}
+                options={options}
+                onSelect={onSelect}
+                onSearch={handleSearch}
                 placeholder="search text"
-                enterButton="Search"
-                size="large"
-                suffix={suffix}
               />
-            </AutoComplete>
-            <span>Radius</span>
-            <Select style={{ width: 120 }} onChange={handleChange} allowClear >
-              {radusList.map((e) => (
+              </Form.Item>
+
+              <Form.Item name="radius" label="Radius">
+              <Select style={{ width: 120 }} onChange={handleChange} allowClear >
+              {radiusList.map((e) => (
                 <Option value={e} key={e}>{e}</Option>
               ))}
             </Select>
+              </Form.Item>
+              <Form.Item {...tailLayout}>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+                <Button htmlType="button" onClick={onReset}>
+                  Reset
+                </Button>
+              </Form.Item>
+            </Form>
           </Col>
         </Row>
         <Row gutter={16}>
@@ -99,7 +148,6 @@ const App: FC = () => {
           </Col>
         </Row>
       </Content>
-      <Footer>Footer</Footer>
     </Layout>
   </div>
   )
