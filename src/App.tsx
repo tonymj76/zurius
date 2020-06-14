@@ -67,7 +67,8 @@ const App: FC = () => {
     console.log(values.input)
     const fetchData  = async () => {
       const result = await axios(
-        `http://localhost:8080/?input=${input}&radius=${radius}`
+        // `http://localhost:8080/?input=${input}&radius=${radius}`
+        "https://google.com"
       )
       const {Candidates} = result.data.Message;
       setState({
