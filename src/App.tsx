@@ -71,6 +71,7 @@ const App: FC = () => {
         `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}`
       )
       const {Error, Message} = response.data
+      console.log(response.data)
       if (Error) {
         setState({
           ...state, ...{
