@@ -67,9 +67,9 @@ const App: FC = () => {
     console.log(values.input)
     const fetchData  = async () => {
       const result = await axios(
-        // `http://localhost:8080/?input=${input}&radius=${radius}`
-        "https://google.com"
+        `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}`
       )
+      
       const {Candidates} = result.data.Message;
       setState({
         ...state, ...{
