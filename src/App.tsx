@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect} from 'react';
+import React, { FC, useState} from 'react';
 import {
   Card,
   Layout,
@@ -9,7 +9,11 @@ import {
   Divider,
   AutoComplete,
   Form,
-  Button
+  Button,
+  Modal,
+  Spin,
+  Space,
+  Descriptions
 } from 'antd';
 import axios from 'axios';
 import Data from './hospitalList.json'
@@ -32,7 +36,7 @@ const searchResult = (query: string) => {
 }
 
 const App: FC = () => {
-  const [query, setQuery] = useState({} as any)
+  const [visible, setVisible] = useState(false)
   const [state, setState] = useState(
     {
       isLoading: true,
@@ -40,14 +44,30 @@ const App: FC = () => {
       formatted_address: "",
       name: "",
       rating: ""
-    }
+    } as any
   )
   const [options, setOptions] = useState([] as any);
   const [form] = Form.useForm();
-  useEffect(() => {
+
+  const handleOk = (e: any) => {
+    console.log(e);
+    setVisible(false);
+  };
+
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  const onReset = () => {
+    form.resetFields();
+  }
+  
+  const onFinish = (values: any) => {
+    const {input, radius} = values
+    console.log(values.input)
     const fetchData  = async () => {
       const result = await axios(
-        `http://localhost:8080/?input=${query.input}&radius=${query.radius}`
+        `http://localhost:8080/?input=${input}&radius=${radius}`
       )
       const {Candidates} = result.data.Message;
       setState({
@@ -57,18 +77,13 @@ const App: FC = () => {
         } 
       })
     }
+    console.log(state)
     fetchData()
-  }, [query])
-  const onReset = () => {
-    form.resetFields();
-  }
-  const onFinish = (values: object) => {
-    setQuery({...values})
-    
+    showModal()
   };
 
   const handleChange = (value: string) => {
-    form.setFieldsValue({radius: value || " "});
+    form.setFieldsValue({radius: parseInt(value) || " "});
   }
   const handleSearch = (value: string) => {
     setOptions(value ? searchResult(value): []);
@@ -147,6 +162,26 @@ const App: FC = () => {
             />
           </Col>
         </Row>
+        <Modal
+          title="Search Results"
+          visible={visible}
+          onOk={handleOk}
+          onCancel={handleOk}
+        >
+          {state.isLoading? (
+            <Space size="middle">
+              <Spin size="large"/>
+            </Space>
+          ): (
+            <Descriptions title="Search Info">
+              <Descriptions.Item label="Hopital Name">{state.name}</Descriptions.Item>
+              <Descriptions.Item label="Rating">{state.rating}</Descriptions.Item>
+              <Descriptions.Item label="Address">
+                {state.formatted_address}
+              </Descriptions.Item>
+            </Descriptions>
+            )}
+        </Modal>
       </Content>
     </Layout>
   </div>
