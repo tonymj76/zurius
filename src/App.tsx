@@ -40,6 +40,7 @@ const App: FC = () => {
   const [state, setState] = useState(
     {
       isLoading: true,
+      hasError: false,
       photos: "",
       formatted_address: "",
       name: "",
@@ -66,11 +67,22 @@ const App: FC = () => {
     const {input, radius} = values
     console.log(values.input)
     const fetchData  = async () => {
-      const result = await axios(
+      const response = await axios(
         `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}`
       )
-      
-      const {Candidates} = result.data.Message;
+      const {Error, Message} = response.data
+      if (Error) {
+        setState({
+          ...state, ...{
+            isLoading:false,
+            hasError: true,
+            Error,
+            Message
+          } 
+        })
+        return
+      }
+      const {Candidates} = Message;
       setState({
         ...state, ...{
           isLoading:false,
@@ -173,15 +185,20 @@ const App: FC = () => {
             <Space size="middle">
               <Spin size="large"/>
             </Space>
-          ): (
-            <Descriptions title="Search Info">
+          ): [( state.hasError ?
+            <Descriptions title="Error">
+              <Descriptions.Item label="Error type">{state.Error}</Descriptions.Item>
+              <Descriptions.Item label="Error message">{state.Message}</Descriptions.Item>
+            </Descriptions>
+            : 
+            <Descriptions>
               <Descriptions.Item label="Hopital Name">{state.name}</Descriptions.Item>
               <Descriptions.Item label="Rating">{state.rating}</Descriptions.Item>
               <Descriptions.Item label="Address">
                 {state.formatted_address}
               </Descriptions.Item>
             </Descriptions>
-            )}
+            )]}
         </Modal>
       </Content>
     </Layout>
