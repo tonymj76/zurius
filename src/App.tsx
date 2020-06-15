@@ -51,7 +51,6 @@ const App: FC = () => {
   const [form] = Form.useForm();
 
   const handleOk = (e: any) => {
-    console.log(e);
     setVisible(false);
   };
 
@@ -65,27 +64,33 @@ const App: FC = () => {
   
   const onFinish = (values: any) => {
     const {input, radius} = values
-    console.log(values.input)
     const fetchData  = async () => {
-      const response = await axios(
+      await axios.get(
         `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}`
-      )
-      const {Candidates} = response.data.Message;
-      console.log(response.data)
-      if (!Candidates) {
+      ).then(
+        (response: any) => {
+          const {Candidates} = response.data.Message;
+          setState({
+            ...state, ...{
+              isLoading:false,
+              ...Candidates[0]
+            } 
+          })
+        }
+      ).catch((error: any) => {
         setState({
           ...state, ...{
             isLoading:false,
             hasError: true,
           } 
         })
-        return
-      }
-      setState({
-        ...state, ...{
-          isLoading:false,
-          ...Candidates[0]
-        } 
+      }).then(()=> {
+        setState({
+          ...state, ...{
+            isLoading:false,
+            hasError: true,
+          } 
+        })
       })
     }
     fetchData()
