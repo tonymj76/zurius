@@ -70,20 +70,17 @@ const App: FC = () => {
       const response = await axios(
         `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}`
       )
-      const {Error, Message} = response.data
+      const {Candidates} = response.data.Message;
       console.log(response.data)
-      if (Error) {
+      if (!Candidates) {
         setState({
           ...state, ...{
             isLoading:false,
             hasError: true,
-            Error,
-            Message
           } 
         })
         return
       }
-      const {Candidates} = Message;
       setState({
         ...state, ...{
           isLoading:false,
@@ -91,7 +88,6 @@ const App: FC = () => {
         } 
       })
     }
-    console.log(state)
     fetchData()
     showModal()
   };
@@ -188,8 +184,10 @@ const App: FC = () => {
             </Space>
           ): [( state.hasError ?
             <Descriptions title="Error">
-              <Descriptions.Item label="Error type">{state.Error}</Descriptions.Item>
-              <Descriptions.Item label="Error message">{state.Message}</Descriptions.Item>
+              <Descriptions.Item label="Error type">maps: REQUEST_DENIED - You must enable Billing on the Google Cloud Project at 
+              https://console.cloud.google.com/project/_/billing/enable 
+              Learn more at </Descriptions.Item>
+              <Descriptions.Item label="Error message">failed to fetch request</Descriptions.Item>
             </Descriptions>
             : 
             <Descriptions>
