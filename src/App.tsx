@@ -13,6 +13,7 @@ import {
   Modal,
   Spin,
   Space,
+  Badge,
   Descriptions
 } from 'antd';
 import axios from 'axios';
@@ -41,10 +42,8 @@ const App: FC = () => {
     {
       isLoading: true,
       hasError: false,
-      photos: "",
-      formatted_address: "",
-      name: "",
-      rating: ""
+      results:[],
+      name:""
     } as any
   )
   const [options, setOptions] = useState([] as any);
@@ -64,16 +63,18 @@ const App: FC = () => {
   
   const onFinish = (values: any) => {
     const {input, radius} = values
+    const url = radius ? `https://zurius-api.herokuapp.com/api/v1/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/api/v1/?input=${input}`
     const fetchData  = async () => {
       await axios.get(
-        `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}`
+        url
       ).then(
         (response: any) => {
-          const {Candidates} = response.data.Message;
+          const {results, summary} = response.data.Message;
           setState({
             ...state, ...{
               isLoading:false,
-              ...Candidates[0]
+              results: results,
+              name: summary.query
             } 
           })
         }
@@ -97,11 +98,11 @@ const App: FC = () => {
     setOptions(value ? searchResult(value): []);
   };
   const onSelect = (value: string) => {
-    form.setFieldsValue({input: value+ " Nigeria" });
+    form.setFieldsValue({input: value});
   };
 
   const radiusList = [
-    '5km', '10km', '20km'
+    '5km', '10km', '20km', '50km', '100km', '1000km', '2000km'
   ]
   return (
   <div className="App">
@@ -189,11 +190,46 @@ const App: FC = () => {
             </Descriptions>
             : 
             <Descriptions>
-              <Descriptions.Item label="Hopital Name">{state.name}</Descriptions.Item>
-              <Descriptions.Item label="Rating">{state.rating}</Descriptions.Item>
-              <Descriptions.Item label="Address">
-                {state.formatted_address}
-              </Descriptions.Item>
+              {state.results.map(((data: any) => (
+              <>
+                <Descriptions.Item label="Hopital Name" key={data.id}>{state.name}</Descriptions.Item>
+                <Descriptions.Item label={data.score}>{data.score}</Descriptions.Item>
+                <Descriptions.Item label={data.name}>{data.name}</Descriptions.Item>
+                <Descriptions.Item label={data.position.lat}>{data.position.lat}</Descriptions.Item>
+                <Descriptions.Item label={data.position.lon}>{data.position.lon}</Descriptions.Item>
+                <Descriptions.Item label="Status" span={3}>
+                  <Badge status="processing" text="Address" />
+                </Descriptions.Item>
+                <Descriptions.Item label={data.address.country}>
+                  {data.address.country}
+                </Descriptions.Item>
+                <Descriptions.Item label={data.address.countrySubdivision}>
+                  {data.address.countrySubdivision}
+                </Descriptions.Item>
+                <Descriptions.Item label={data.address.freeformAddress}>
+                  {data.address.freeformAddress}
+                </Descriptions.Item>
+                <Descriptions.Item label={data.address.municipality}>
+                  {data.address.municipality}
+                </Descriptions.Item>
+                <Descriptions.Item label={data.address.municipalitySubdivision}>
+                  {data.address.municipalitySubdivision}
+                </Descriptions.Item>
+                <Descriptions.Item label={data.address.streetName}>
+                  {data.address.streetName}
+                </Descriptions.Item>
+                <Descriptions.Item label="Status" span={3}>
+                  <Badge status="processing" text="classifications" />
+                </Descriptions.Item>
+                <Descriptions.Item label={data.classifications[0].names[0].name}>
+                  {data.classifications[0].names[0].name}
+                </Descriptions.Item>
+                <Descriptions.Item label={data.classifications[0].names[0].nameLocale}>
+                  {data.classifications[0].names[0].nameLocale}
+                </Descriptions.Item>
+
+              </>
+              )))}
             </Descriptions>
             )]}
         </Modal>
