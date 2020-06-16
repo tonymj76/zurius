@@ -84,13 +84,6 @@ const App: FC = () => {
             hasError: true,
           } 
         })
-      }).then(()=> {
-        setState({
-          ...state, ...{
-            isLoading:false,
-            hasError: true,
-          } 
-        })
       })
     }
     fetchData()
