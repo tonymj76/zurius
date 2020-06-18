@@ -63,11 +63,11 @@ const App: FC = () => {
   
   const onFinish = (values: any) => {
     const {input, radius} = values
-    const url = radius ? `https://zurius-api.herokuapp.com/api/v1/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/api/v1/?input=${input}`
-    const urls = radius ? `http://localhost:8080/?input=${input}&radius=${radius}` : `http://localhost:8080/?input=${input}`
+    const url = radius ? `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/?input=${input}`
+    // const urls = radius ? `http://localhost:8080/?input=${input}&radius=${radius}` : `http://localhost:8080/?input=${input}`
     const fetchData  = async () => {
       await axios.get(
-        urls,
+        url,
         // {
         //   headers: {
         //          "Access-Control-Allow-Origin": "http://localhost:8080",
