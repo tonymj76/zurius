@@ -80,10 +80,6 @@ const App: FC = () => {
                 
                 
         //        },
-        //   // proxy: {
-        //   //     host: 'localhost',
-        //   //     port: 8080,
-        //   //   },
         // }
       ).then(
         (response: any) => {
@@ -212,41 +208,45 @@ const App: FC = () => {
               {state.results.map(((data: any) => (
               <>
                 <Descriptions.Item label="Hopital Name" key={data.id}>{state.name}</Descriptions.Item>
-                <Descriptions.Item label={data.score}>{data.score}</Descriptions.Item>
-                <Descriptions.Item label={data.name}>{data.name}</Descriptions.Item>
-                <Descriptions.Item label={data.position.lat}>{data.position.lat}</Descriptions.Item>
-                <Descriptions.Item label={data.position.lon}>{data.position.lon}</Descriptions.Item>
+                <Descriptions.Item label="Score">{data.score}</Descriptions.Item>
+                <Descriptions.Item label="Categories">
+                  {data.poi.categories[0] || ""}<br/> {data.poi.categories[1] || " "}
+                </Descriptions.Item>
+                <Descriptions.Item label="Position" span={3}>
+                  <Badge status="processing" text="Position" />
+                </Descriptions.Item>
+                <Descriptions.Item label="Latitude">{data.position.lat}</Descriptions.Item>
+                <Descriptions.Item label="Longitude">{data.position.lon}</Descriptions.Item>
                 <Descriptions.Item label="Status" span={3}>
                   <Badge status="processing" text="Address" />
                 </Descriptions.Item>
-                <Descriptions.Item label={data.address.country}>
+                <Descriptions.Item label="Country">
                   {data.address.country}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.address.countrySubdivision}>
+                <Descriptions.Item label="Country Subdivision">
                   {data.address.countrySubdivision}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.address.freeformAddress}>
+                <Descriptions.Item label="Free-form Address">
                   {data.address.freeformAddress}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.address.municipality}>
+                <Descriptions.Item label="Municipality">
                   {data.address.municipality}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.address.municipalitySubdivision}>
+                <Descriptions.Item label="Municipality Subdivision">
                   {data.address.municipalitySubdivision}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.address.streetName}>
+                <Descriptions.Item label="Street Name">
                   {data.address.streetName}
                 </Descriptions.Item>
-                <Descriptions.Item label="Status" span={3}>
-                  <Badge status="processing" text="classifications" />
+                <Descriptions.Item label="Classifications" span={3}>
+                  <Badge status="processing" text="Classifications" />
                 </Descriptions.Item>
-                <Descriptions.Item label={data.poi.classifications[0].names[0].name}>
+                <Descriptions.Item label="Names">
                   {data.poi.classifications[0].names[0].name}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.poi.classifications[0].names[0].nameLocale}>
+                <Descriptions.Item label="Name Locale">
                   {data.poi.classifications[0].names[0].nameLocale}
                 </Descriptions.Item>
-
               </>
               )))}
             </Descriptions>
