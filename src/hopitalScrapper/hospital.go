@@ -1,4 +1,4 @@
-package main
+package hospital
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func main() {
+func hop() {
 	count := 0
 	sliceHo := []string{}
 	hosiptals := map[string][]string{}
