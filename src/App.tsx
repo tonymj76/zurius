@@ -64,27 +64,13 @@ const App: FC = () => {
   const onFinish = (values: any) => {
     const {input, radius} = values
     const url = radius ? `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/?input=${input}`
-    // const urls = radius ? `http://localhost:8080/?input=${input}&radius=${radius}` : `http://localhost:8080/?input=${input}`
+    // const url = radius ? `http://localhost:8080/?input=${input}&radius=${radius}` : `http://localhost:8080/?input=${input}`
     const fetchData  = async () => {
       await axios.get(
-        url,
-        // {
-        //   headers: {
-        //          "Access-Control-Allow-Origin": "http://localhost:8080",
-        //          "Access-Control-Request-Method" : "GET",
-        //         "Access-Control-Request-Headers" :"Origin",
-        //          "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
-        //          "Access-Control-Allow-Headers": "Origin , Authorization",
-        //          "Content-Type": "application/json",
-        //         'Accept':'application/json'
-                
-                
-        //        },
-        // }
+        url
       ).then(
         (response: any) => {
           const {Results, Summary} = response.data;
-          console.log(Results, Summary)
           setState({
             ...state, ...{
               isLoading:false,
