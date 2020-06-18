@@ -64,17 +64,36 @@ const App: FC = () => {
   const onFinish = (values: any) => {
     const {input, radius} = values
     const url = radius ? `https://zurius-api.herokuapp.com/api/v1/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/api/v1/?input=${input}`
+    const urls = radius ? `http://localhost:8080/?input=${input}&radius=${radius}` : `http://localhost:8080/?input=${input}`
     const fetchData  = async () => {
       await axios.get(
-        url
+        urls,
+        // {
+        //   headers: {
+        //          "Access-Control-Allow-Origin": "http://localhost:8080",
+        //          "Access-Control-Request-Method" : "GET",
+        //         "Access-Control-Request-Headers" :"Origin",
+        //          "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        //          "Access-Control-Allow-Headers": "Origin , Authorization",
+        //          "Content-Type": "application/json",
+        //         'Accept':'application/json'
+                
+                
+        //        },
+        //   // proxy: {
+        //   //     host: 'localhost',
+        //   //     port: 8080,
+        //   //   },
+        // }
       ).then(
         (response: any) => {
-          const {results, summary} = response.data.Message;
+          const {Results, Summary} = response.data;
+          console.log(Results, Summary)
           setState({
             ...state, ...{
               isLoading:false,
-              results: results,
-              name: summary.query
+              results: Results,
+              name: Summary.query
             } 
           })
         }
@@ -221,11 +240,11 @@ const App: FC = () => {
                 <Descriptions.Item label="Status" span={3}>
                   <Badge status="processing" text="classifications" />
                 </Descriptions.Item>
-                <Descriptions.Item label={data.classifications[0].names[0].name}>
-                  {data.classifications[0].names[0].name}
+                <Descriptions.Item label={data.poi.classifications[0].names[0].name}>
+                  {data.poi.classifications[0].names[0].name}
                 </Descriptions.Item>
-                <Descriptions.Item label={data.classifications[0].names[0].nameLocale}>
-                  {data.classifications[0].names[0].nameLocale}
+                <Descriptions.Item label={data.poi.classifications[0].names[0].nameLocale}>
+                  {data.poi.classifications[0].names[0].nameLocale}
                 </Descriptions.Item>
 
               </>
