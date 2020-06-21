@@ -63,19 +63,20 @@ const App: FC = () => {
   
   const onFinish = (values: any) => {
     const {input, radius} = values
-    const url = radius ? `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/?input=${input}`
+    const url = radius ? `https://api.tomtom.com/search/2/search/${input}.json?key=${process.env.REACT_APP_APIKEY}&countrySet=NG&lat=37.8085&lon=-122.423&radius=${radius}` : `https://api.tomtom.com/search/2/search/${input}.json?key=${process.env.REACT_APP_APIKEY}&countrySet=NG&lat=37.8085&lon=-122.423`
+    // const url = radius ? `https://zurius-api.herokuapp.com/?input=${input}&radius=${radius}` : `https://zurius-api.herokuapp.com/?input=${input}`
     // const url = radius ? `http://localhost:8080/?input=${input}&radius=${radius}` : `http://localhost:8080/?input=${input}`
     const fetchData  = async () => {
       await axios.get(
         url
       ).then(
         (response: any) => {
-          const {Results, Summary} = response.data;
+          const {results, summary} = response.data;
           setState({
             ...state, ...{
               isLoading:false,
-              results: Results,
-              name: Summary.query
+              results: results,
+              name: summary.query
             } 
           })
         }
